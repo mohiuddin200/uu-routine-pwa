@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="UU Routine icon">
+  <rect width="512" height="512" rx="96" fill="#0f766e"/>
+  <path d="M128 116h256a38 38 0 0 1 38 38v216a38 38 0 0 1-38 38H128a38 38 0 0 1-38-38V154a38 38 0 0 1 38-38Z" fill="#ecfdf5"/>
+  <path d="M90 184h332" stroke="#14b8a6" stroke-width="24"/>
+  <path d="M164 92v70M348 92v70" stroke="#fff7ed" stroke-width="34" stroke-linecap="round"/>
+  <rect x="142" y="232" width="78" height="58" rx="16" fill="#f97357"/>
+  <rect x="248" y="232" width="122" height="58" rx="16" fill="#0f766e"/>
+  <rect x="142" y="320" width="228" height="36" rx="18" fill="#94a3b8"/>
+</svg>

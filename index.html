@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f766e" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="UU Routine" />
+    <title>UU CSE Routine | Summer 26-1</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./assets/icon-192.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./data/routine-data.js" defer></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="UU CSE Routine home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" role="img">
+              <path d="M8 5h16a3 3 0 0 1 3 3v17a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3Z" />
+              <path d="M10 11h12M10 16h6M10 21h10" />
+            </svg>
+          </span>
+          <span>
+            <strong>UU CSE Routine</strong>
+            <small>Summer 26-1</small>
+          </span>
+        </a>
+        <button class="icon-button hidden" id="installButton" type="button" aria-label="Install app">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14" />
+          </svg>
+        </button>
+      </header>
+
+      <section class="hero-panel" aria-labelledby="pageTitle">
+        <div>
+          <p class="eyebrow">Offline Friday timetable</p>
+          <h1 id="pageTitle">Summer 26-1 Routine</h1>
+          <p id="heroSummary">Loading routine...</p>
+        </div>
+        <div class="hero-stats" aria-label="Routine summary">
+          <span>
+            <strong id="statClasses">0</strong>
+            <small>Classes</small>
+          </span>
+          <span>
+            <strong id="statBatches">0</strong>
+            <small>Sections</small>
+          </span>
+          <span>
+            <strong id="statRooms">0</strong>
+            <small>Rooms</small>
+          </span>
+        </div>
+      </section>
+
+      <section class="control-panel" aria-label="Routine filters">
+        <div class="field search-field">
+          <label for="searchInput">Search</label>
+          <div class="input-shell">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m21 21-4.3-4.3m1.3-5.2a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" />
+            </svg>
+            <input id="searchInput" type="search" placeholder="Course, teacher, room..." autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="batchSelect">Section</label>
+          <select id="batchSelect"></select>
+        </div>
+
+        <div class="day-strip" id="dayStrip" aria-label="Filter by day"></div>
+        <div class="batch-rail" id="batchRail" aria-label="Quick batch selection"></div>
+
+        <div class="filter-tabs" id="filterTabs" aria-label="Quick filters">
+          <button class="active" type="button" data-filter="all">All</button>
+          <button type="button" data-filter="upcoming">Upcoming</button>
+          <button type="button" data-filter="labs">Labs</button>
+          <button type="button" data-filter="tba">Room TBA</button>
+        </div>
+      </section>
+
+      <section class="now-panel" id="nowPanel" aria-live="polite"></section>
+
+      <section class="mini-summary" id="miniSummary" aria-label="Selected routine summary"></section>
+
+      <section class="schedule-section" aria-labelledby="scheduleTitle">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Schedule</p>
+            <h2 id="scheduleTitle">Friday Classes</h2>
+          </div>
+          <a class="pdf-link" href="./assets/original-routine.pdf" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" />
+              <path d="M14 3v5h5M9 14h6M9 17h4" />
+            </svg>
+            PDF
+          </a>
+        </div>
+        <div class="timeline" id="timeline"></div>
+        <div class="empty-state hidden" id="emptyState">
+          <strong>No classes found</strong>
+          <p>Try another batch, day, or search term.</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
