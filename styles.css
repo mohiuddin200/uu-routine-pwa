@@ -222,7 +222,6 @@ h1 {
 }
 
 .control-panel,
-.now-panel,
 .schedule-section {
   margin-top: 14px;
   border: 1px solid var(--line);
@@ -355,56 +354,6 @@ select {
 
 .day-strip button.active small {
   color: rgba(255, 255, 255, 0.78);
-}
-
-.now-panel {
-  padding: 14px;
-}
-
-.now-content {
-  display: grid;
-  gap: 10px;
-}
-
-.now-label {
-  display: inline-flex;
-  width: fit-content;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 8px;
-  border-radius: var(--radius);
-  background: rgba(249, 115, 87, 0.1);
-  color: #a13d26;
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.now-main {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.now-main strong {
-  display: block;
-  color: var(--slate);
-  font-size: 1.18rem;
-}
-
-.now-main span {
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.now-time {
-  flex: 0 0 auto;
-  padding: 8px 10px;
-  border-radius: var(--radius);
-  background: var(--surface-strong);
-  color: var(--teal-dark);
-  font-weight: 850;
 }
 
 .mini-summary {

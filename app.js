@@ -75,14 +75,6 @@ function courseName(code) {
   return courseNames[code] || "";
 }
 
-function courseLabel(entry) {
-  return courseName(entry.course) || entry.course || "Course TBA";
-}
-
-function teacherRoomLabel(entry) {
-  return [entry.teacher || "Teacher TBA", entry.room].filter(Boolean).join(" · ");
-}
-
 function normalize(value) {
   return String(value ?? "").toLowerCase().trim();
 }
@@ -217,109 +209,6 @@ function findCurrent(entries) {
   return entries.filter((entry) => toMinutes(entry.start) <= minutes && toMinutes(entry.end) > minutes);
 }
 
-function findNext(entries) {
-  if (state.day !== todayName()) {
-    return entries[0] || null;
-  }
-  const minutes = nowMinutes();
-  return entries.find((entry) => toMinutes(entry.start) >= minutes) || null;
-}
-
-function renderNowPanel() {
-  const scoped = baseEntries().sort(
-    (a, b) => toMinutes(a.start) - toMinutes(b.start) || a.batch.localeCompare(b.batch),
-  );
-  const current = findCurrent(scoped);
-  const next = findNext(scoped);
-  const batchLabel = state.batch === SELECT_ALL ? "all 67 sections" : state.batch;
-
-  if (!data.meta.availableDays.includes(state.day)) {
-    els.nowPanel.innerHTML = `
-      <div class="now-content">
-        <span class="now-label">No routine</span>
-        <div class="now-main">
-          <div>
-            <strong>${escapeHtml(state.day)} has no listed classes</strong>
-            <span>The routine data only contains ${escapeHtml(data.meta.availableDays.join(", "))} classes.</span>
-          </div>
-        </div>
-      </div>`;
-    return;
-  }
-
-  if (!scoped.length) {
-    els.nowPanel.innerHTML = `
-      <div class="now-content">
-        <span class="now-label">No class</span>
-        <div class="now-main">
-          <div>
-            <strong>No classes for ${escapeHtml(batchLabel)}</strong>
-            <span>Change the batch filter to see another routine.</span>
-          </div>
-        </div>
-      </div>`;
-    return;
-  }
-
-  if (current.length) {
-    const headline =
-      state.batch === SELECT_ALL
-        ? `${current.length} classes are running now`
-        : `${courseLabel(current[0])} is running now`;
-    const detail =
-      state.batch === SELECT_ALL
-        ? `${timeLabel(current[0])} across selected batches`
-        : teacherRoomLabel(current[0]);
-    els.nowPanel.innerHTML = `
-      <div class="now-content">
-        <span class="now-label">Now</span>
-        <div class="now-main">
-          <div>
-            <strong>${escapeHtml(headline)}</strong>
-            <span>${escapeHtml(detail)}</span>
-          </div>
-          <div class="now-time">${escapeHtml(timeLabel(current[0]))}</div>
-        </div>
-      </div>`;
-    return;
-  }
-
-  if (next) {
-    const label = state.day === todayName() ? "Next" : "First";
-    const headline =
-      state.batch === SELECT_ALL
-        ? `${scoped.filter((entry) => entry.start === next.start).length} classes at ${formatTime(next.start)}`
-        : courseLabel(next);
-    const detail =
-      state.batch === SELECT_ALL
-        ? `${state.day} · ${batchLabel}`
-        : teacherRoomLabel(next);
-    els.nowPanel.innerHTML = `
-      <div class="now-content">
-        <span class="now-label">${label}</span>
-        <div class="now-main">
-          <div>
-            <strong>${escapeHtml(headline)}</strong>
-            <span>${escapeHtml(detail)}</span>
-          </div>
-          <div class="now-time">${escapeHtml(timeLabel(next))}</div>
-        </div>
-      </div>`;
-    return;
-  }
-
-  els.nowPanel.innerHTML = `
-    <div class="now-content">
-      <span class="now-label">Done</span>
-      <div class="now-main">
-        <div>
-          <strong>All listed classes are finished</strong>
-          <span>${escapeHtml(state.day)} routine for ${escapeHtml(batchLabel)}</span>
-        </div>
-      </div>
-    </div>`;
-}
-
 function renderMiniSummary(entries) {
   const first = entries[0];
   const last = entries[entries.length - 1];
@@ -435,7 +324,6 @@ function render() {
   renderDayStrip();
   renderBatchRail();
   renderFilterTabs();
-  renderNowPanel();
   renderMiniSummary(entries);
   renderTitle(entries);
   renderTimeline(entries);
@@ -517,7 +405,6 @@ function init() {
     dayStrip: document.querySelector("#dayStrip"),
     batchRail: document.querySelector("#batchRail"),
     filterTabs: document.querySelector("#filterTabs"),
-    nowPanel: document.querySelector("#nowPanel"),
     miniSummary: document.querySelector("#miniSummary"),
     scheduleTitle: document.querySelector("#scheduleTitle"),
     timeline: document.querySelector("#timeline"),
