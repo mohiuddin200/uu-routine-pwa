@@ -1,4 +1,4 @@
-const CACHE_NAME = "uu-cse-routine-v4";
+const CACHE_NAME = "uu-cse-routine-v9";
 
 const APP_SHELL = [
   "./",
@@ -11,6 +11,7 @@ const APP_SHELL = [
   "./assets/icon-192.png",
   "./assets/icon-512.png",
   "./assets/original-routine.pdf",
+  "./docs/online-class.pdf",
 ];
 
 self.addEventListener("install", (event) => {

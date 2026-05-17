@@ -38,7 +38,7 @@
 
       <section class="hero-panel" aria-labelledby="pageTitle">
         <div>
-          <p class="eyebrow">Offline Friday timetable</p>
+          <p class="eyebrow">Online and offline timetable</p>
           <h1 id="pageTitle">Summer 26-1 Routine</h1>
           <p id="heroSummary">Loading routine...</p>
         </div>
@@ -79,9 +79,7 @@
 
         <div class="filter-tabs" id="filterTabs" aria-label="Quick filters">
           <button class="active" type="button" data-filter="all">All</button>
-          <button type="button" data-filter="upcoming">Upcoming</button>
           <button type="button" data-filter="labs">Labs</button>
-          <button type="button" data-filter="tba">Room TBA</button>
         </div>
       </section>
 
@@ -93,15 +91,24 @@
         <div class="section-head">
           <div>
             <p class="eyebrow">Schedule</p>
-            <h2 id="scheduleTitle">Friday Classes</h2>
+            <h2 id="scheduleTitle">Classes</h2>
           </div>
-          <a class="pdf-link" href="./assets/original-routine.pdf" target="_blank" rel="noreferrer">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" />
-              <path d="M14 3v5h5M9 14h6M9 17h4" />
-            </svg>
-            PDF
-          </a>
+          <div class="pdf-links" aria-label="Source PDFs">
+            <a class="pdf-link" href="./assets/original-routine.pdf" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" />
+                <path d="M14 3v5h5M9 14h6M9 17h4" />
+              </svg>
+              Offline PDF
+            </a>
+            <a class="pdf-link" href="./docs/online-class.pdf" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" />
+                <path d="M14 3v5h5M9 14h6M9 17h4" />
+              </svg>
+              Online PDF
+            </a>
+          </div>
         </div>
         <div class="timeline" id="timeline"></div>
         <div class="empty-state hidden" id="emptyState">

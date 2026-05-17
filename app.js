@@ -12,6 +12,18 @@ const icons = {
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v5l3 2"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>',
 };
 
+const courseNames = {
+  CSE0613101: "Structured Programming Language",
+  CSE0613102: "Structured Programming Language Lab",
+  MAT0541101: "Differential & Integral Calculus",
+  EEE0713201: "Electronics",
+  EEE0714202: "Electronics Lab",
+  GED0413201: "Entrepreneurship: Innovation and Commercialization",
+  GED0222101: "Bangladesh Studies: History and Cultures",
+  ENG0232101: "Communicative English",
+  ENG0232102: "Communicative English Lab",
+};
+
 const state = {
   day: "Friday",
   batch: SELECT_ALL,
@@ -59,6 +71,18 @@ function timeLabel(entry) {
   return formatRange(entry.start, entry.end);
 }
 
+function courseName(code) {
+  return courseNames[code] || "";
+}
+
+function courseLabel(entry) {
+  return courseName(entry.course) || entry.course || "Course TBA";
+}
+
+function teacherRoomLabel(entry) {
+  return [entry.teacher || "Teacher TBA", entry.room].filter(Boolean).join(" · ");
+}
+
 function normalize(value) {
   return String(value ?? "").toLowerCase().trim();
 }
@@ -67,14 +91,21 @@ function isLab(entry) {
   return normalize(entry.room).includes("lab");
 }
 
-function isTba(entry) {
-  return !entry.room || normalize(entry.room).includes("tba");
-}
-
 function matchesQuery(entry) {
   const query = normalize(state.query);
   if (!query) return true;
-  return [entry.batch, entry.course, entry.teacher, entry.room, entry.start, entry.end, timeLabel(entry), entry.program]
+  return [
+    entry.batch,
+    entry.course,
+    courseName(entry.course),
+    entry.teacher,
+    entry.room,
+    entry.start,
+    entry.end,
+    timeLabel(entry),
+    entry.program,
+    entry.mode,
+  ]
     .map(normalize)
     .some((value) => value.includes(query));
 }
@@ -88,17 +119,10 @@ function baseEntries() {
 }
 
 function filteredEntries() {
-  const currentDay = todayName();
-  const minutes = nowMinutes();
-
   return baseEntries()
     .filter(matchesQuery)
     .filter((entry) => {
       if (state.filter === "labs") return isLab(entry);
-      if (state.filter === "tba") return isTba(entry);
-      if (state.filter === "upcoming" && state.day === currentDay) {
-        return toMinutes(entry.end) > minutes;
-      }
       return true;
     })
     .sort((a, b) => toMinutes(a.start) - toMinutes(b.start) || a.batch.localeCompare(b.batch));
@@ -117,7 +141,7 @@ function loadSavedState() {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
     if (data.days.includes(saved.day)) state.day = saved.day;
     if (saved.batch === SELECT_ALL || data.batches.includes(saved.batch)) state.batch = saved.batch;
-    if (["all", "upcoming", "labs", "tba"].includes(saved.filter)) state.filter = saved.filter;
+    if (["all", "labs"].includes(saved.filter)) state.filter = saved.filter;
   } catch {
     localStorage.removeItem(STORAGE_KEY);
   }
@@ -137,10 +161,13 @@ function saveState() {
 
 function renderStats() {
   const rooms = unique(data.entries.map((entry) => entry.room));
+  const days = data.meta.availableDays.join(", ");
+  const sourceCount = data.meta.sources?.length || 1;
+  const sourceLabel = `${sourceCount} official PDF${sourceCount === 1 ? "" : "s"}`;
   els.statClasses.textContent = data.entries.length;
   els.statBatches.textContent = data.batches.length;
   els.statRooms.textContent = rooms.length;
-  els.heroSummary.textContent = `${data.entries.length} Friday classes for Batch 67 across ${data.batches.length} sections, extracted from the official ${data.meta.generatedFromPages}-page PDF.`;
+  els.heroSummary.textContent = `${data.entries.length} classes for Batch 67 across ${data.batches.length} sections on ${days}, extracted from ${sourceLabel}.`;
 }
 
 function renderBatchSelect() {
@@ -213,7 +240,7 @@ function renderNowPanel() {
         <div class="now-main">
           <div>
             <strong>${escapeHtml(state.day)} has no listed classes</strong>
-            <span>The PDF only contains ${escapeHtml(data.meta.availableDays.join(", "))} classes.</span>
+            <span>The routine data only contains ${escapeHtml(data.meta.availableDays.join(", "))} classes.</span>
           </div>
         </div>
       </div>`;
@@ -238,11 +265,11 @@ function renderNowPanel() {
     const headline =
       state.batch === SELECT_ALL
         ? `${current.length} classes are running now`
-        : `${current[0].course} is running now`;
+        : `${courseLabel(current[0])} is running now`;
     const detail =
       state.batch === SELECT_ALL
         ? `${timeLabel(current[0])} across selected batches`
-        : `${current[0].teacher || "Teacher TBA"} · ${current[0].room || "Room TBA"}`;
+        : teacherRoomLabel(current[0]);
     els.nowPanel.innerHTML = `
       <div class="now-content">
         <span class="now-label">Now</span>
@@ -262,11 +289,11 @@ function renderNowPanel() {
     const headline =
       state.batch === SELECT_ALL
         ? `${scoped.filter((entry) => entry.start === next.start).length} classes at ${formatTime(next.start)}`
-        : next.course;
+        : courseLabel(next);
     const detail =
       state.batch === SELECT_ALL
-        ? `${escapeHtml(state.day)} · ${escapeHtml(batchLabel)}`
-        : `${next.teacher || "Teacher TBA"} · ${next.room || "Room TBA"}`;
+        ? `${state.day} · ${batchLabel}`
+        : teacherRoomLabel(next);
     els.nowPanel.innerHTML = `
       <div class="now-content">
         <span class="now-label">${label}</span>
@@ -297,13 +324,12 @@ function renderMiniSummary(entries) {
   const first = entries[0];
   const last = entries[entries.length - 1];
   const labs = entries.filter(isLab).length;
-  const tba = entries.filter(isTba).length;
 
   els.miniSummary.innerHTML = [
     { value: entries.length, label: "Shown" },
     { value: first ? formatTime(first.start) : "-", label: "First" },
     { value: last ? formatTime(last.end) : "-", label: "Last" },
-    { value: labs || tba, label: labs ? "Labs" : "TBA" },
+    { value: labs, label: "Labs" },
   ]
     .map(
       (item) => `<span><strong>${escapeHtml(item.value)}</strong><small>${escapeHtml(item.label)}</small></span>`,
@@ -314,12 +340,18 @@ function renderMiniSummary(entries) {
 function cardHtml(entry) {
   const current = findCurrent([entry]).length ? " current" : "";
   const lab = isLab(entry) ? " lab" : "";
-  const room = entry.room || "Room TBA";
+  const room = entry.room || "";
   const teacher = entry.teacher || "Teacher TBA";
+  const mode = entry.mode || "";
+  const code = entry.course || "Course TBA";
+  const name = courseName(entry.course);
+  const courseTitle = name
+    ? `<span class="course-name">${escapeHtml(name)}</span><span class="course-code">${escapeHtml(code)}</span>`
+    : `<span class="course-name">${escapeHtml(code)}</span>`;
   const badges = [
+    mode,
     entry.batch,
     isLab(entry) ? "Lab" : "",
-    isTba(entry) ? "Room TBA" : "",
   ].filter(Boolean);
 
   const details = [
@@ -329,8 +361,7 @@ function cardHtml(entry) {
     ["Teacher", teacher],
     ["Room", room],
     ["Slot", `Slot ${entry.slot}`],
-    ["Program", entry.program],
-  ];
+  ].filter(([, value]) => value);
 
   return `
     <article class="class-card${current}${lab}">
@@ -340,7 +371,7 @@ function cardHtml(entry) {
       </div>
       <div class="class-body">
         <div class="class-top">
-          <h3 class="course">${escapeHtml(entry.course || "Course TBA")}</h3>
+          <h3 class="course">${courseTitle}</h3>
           <div class="class-badges">
             ${badges.map((badge) => `<span>${escapeHtml(badge)}</span>`).join("")}
           </div>

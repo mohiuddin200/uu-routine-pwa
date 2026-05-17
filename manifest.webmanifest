@@ -1,7 +1,7 @@
 {
   "name": "UU CSE Routine",
   "short_name": "UU Routine",
-  "description": "Mobile routine app for Uttara University CSE Summer 26-1 offline classes.",
+  "description": "Mobile routine app for Uttara University CSE Summer 26-1 online and offline classes.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
